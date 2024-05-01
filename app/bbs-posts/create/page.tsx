@@ -1,15 +1,17 @@
 "use client"
 
+import { postBBS } from '@/app/actions/postBBSAction'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-const formSchema = z.object({
+export const formSchema = z.object({
   username: z
     .string()
     .min(2, { message: "ユーザー名は2文字以上で入力してください。" }),
@@ -23,6 +25,8 @@ const formSchema = z.object({
 });
 
 const CreateBBSPage = () => {
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,8 +36,9 @@ const CreateBBSPage = () => {
     }
   });
 
-  async function onSubmit() {
-
+  async function onSubmit(value: z.infer<typeof formSchema>) {
+    const { username, title, content } = value;
+    postBBS({ username, title, content });
   }
 
   return (
